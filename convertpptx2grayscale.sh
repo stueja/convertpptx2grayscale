@@ -57,6 +57,7 @@ fi
 
 PPTXFILE="${PPTX%.*}"
 PPTXEXTENSION="${PPTX##*.}"
+MODIFIER="gy"
 
 # echo "Making temp directory"
 TEMPDIR=$(mktemp -d )
@@ -103,7 +104,7 @@ echo "creating new pptx"
 # -q: quiet
 NOWDIR=$(pwd)
 cd "$TEMPDIR"
-zip -r -o -q "${PPTXFILE}.gy.${PPTXEXTENSION}" *
+zip -r -o -q "${PPTXFILE}.${MODIFIER}.${PPTXEXTENSION}" *
 if [[ $? -ne 0 ]]
 then
     echo "error creating new pptx"
@@ -111,7 +112,7 @@ then
 fi
 
 echo "moving new pptx to source folder"
-mv "${PPTXFILE}.new.${PPTXEXTENSION}" "${NOWDIR}"
+mv "${PPTXFILE}.${MODIFIER}.${PPTXEXTENSION}" "${NOWDIR}"
 if [[ $? -ne 0 ]]
 then
     echo "error moving new pptx to source folder"
