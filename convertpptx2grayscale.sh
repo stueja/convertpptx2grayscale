@@ -57,6 +57,7 @@ fi
 
 PPTXFILE="${PPTX%.*}"
 PPTXEXTENSION="${PPTX##*.}"
+# modifier for new file name
 MODIFIER="gy"
 
 # echo "Making temp directory"
@@ -89,7 +90,9 @@ then
 fi
 
 echo "changing to grayscale"
-mogrify -colorspace gray "$TEMPDIR"/ppt/media/*.png
+#mogrify -colorspace gray "$TEMPDIR"/ppt/media/*.png
+# also convert jpeg except Image1.jpeg (title slide background)
+find "$TEMPDIR"/ppt/media/ -type f ! -name "image1.jpeg" -exec mogrify -colorspace gray {} \;
 if [[ $? -ne 0 ]]
 then
     echo "error changing to grayscale"
