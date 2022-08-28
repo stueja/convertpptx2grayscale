@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo .
+
 # mandatory programs
 for NEEDED in unzip mogrify zip
 do
@@ -56,7 +58,6 @@ then
 else
     PPTX=$script_args
     echo "Original File: $PPTX"
-    echo .
 fi
 
 if [[ ! -e $PPTX ]]
@@ -71,8 +72,7 @@ PPTXEXTENSION="${PPTX##*.}"
 # MODIFIER="gy"
 
 echo "Making temp directory"
-TEMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/pptx2gray.XXXXXXXXX"
-)
+TEMPDIR=$(mktemp -d "/tmp/pptx2gray.XXXXXXXXX")
 if [[ $? -ne 0 ]]
 then
     echo "error creating temporary directory"
@@ -152,5 +152,15 @@ rm -rf "$TEMPDIR"
 if [[ $? -ne 0 ]]
 then
     echo "error removing $TEMPDIR"
+    exit
+fi
+
+# for some reason, macos (unzip? zip?) additionally creates 
+# a folder in $TMPDIR
+echo "removing $TMPDIR/pptx2gray*"
+rm -rf "$TMPDIR/pptx2gray*"
+if [[ $? -ne 0 ]]
+then
+    echo "error removing $TMPDIR/pptx2gray*"
     exit
 fi
