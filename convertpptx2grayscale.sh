@@ -17,6 +17,7 @@ USAGE(){
     echo
     echo "Syntax: $0 [-h] filename"
     echo "Options: "
+    echo "d     to be created target directory"
     echo "h     help"
 }
 
@@ -26,10 +27,11 @@ USAGE(){
 script_args=()
 while [ $OPTIND -le "$#" ]
 do
-    if getopts h options
+    if getopts d:h options
     then
         case $options
         in
+            d) DESTINATION="$OPTARG";;
             h) USAGE;;
         esac
     else
@@ -38,10 +40,19 @@ do
     fi
 done
 
+if [[ "$DESTINATION" == "" ]]
+then
+    echo "setting DESTINATION to 'grayscale'"
+    DESTINATION=grayscale
+else
+    echo "setting DESTINATION to ${DESTINATION}"
+fi
+
 
 if [[ ${#script_args[@]} -ne 1 ]]
 then
     echo "exactly one positional parameter expected (filename), ${#script_args[@]} given."
+    echo "${script_args[*]}"
     exit 3
 else
     PPTX=$script_args
@@ -58,7 +69,7 @@ fi
 PPTXFILE="${PPTX%.*}"
 PPTXEXTENSION="${PPTX##*.}"
 # modifier for new file name
-MODIFIER="gy"
+# MODIFIER="gy"
 
 # echo "Making temp directory"
 TEMPDIR=$(mktemp -d )
@@ -100,12 +111,12 @@ then
 fi
 
 echo "creating new pptx"
-# need a deviation here, because zip will otherwise
+# need to chdir here, because zip will otherwise
 # include all the parent folder names
 # -r: recursive
 # -o: set pptx timestamp
 # -q: quiet
-NOWDIR=$(pwd)
+ORIGDIR=$(pwd)
 cd "$TEMPDIR"
 zip -r -o -q "${PPTXFILE}.${MODIFIER}.${PPTXEXTENSION}" *
 if [[ $? -ne 0 ]]
@@ -113,15 +124,26 @@ then
     echo "error creating new pptx"
     exit
 fi
+cd "${ORIGDIR}"
 
-echo "moving new pptx to source folder"
-mv "${PPTXFILE}.${MODIFIER}.${PPTXEXTENSION}" "${NOWDIR}"
+echo "creating destination folder $DESTINATION"
+mkdir -p "$DESTINATION"
 if [[ $? -ne 0 ]]
 then
-    echo "error moving new pptx to source folder"
+    echo "error creating destination folder $DESTINATION"
     exit
 fi
-cd "${NOWDIR}"
+
+echo "moving new pptx to destination folder"
+# TODO: save output in (configurable) folder instead of
+# same folder with different file name
+# mv "${PPTXFILE}.${MODIFIER}.${PPTXEXTENSION}" "${ORIGDIR}"
+mv "${TEMPDIR}/${PPTXFILE}.${MODIFIER}.${PPTXEXTENSION}" "${DESTINATION}/${PPTXFILE}.${PPTXEXTENSION}"
+if [[ $? -ne 0 ]]
+then
+    echo "error moving new pptx to destination folder"
+    exit
+fi
 
 echo "removing $TEMPDIR"
 rm -rf "$TEMPDIR"
