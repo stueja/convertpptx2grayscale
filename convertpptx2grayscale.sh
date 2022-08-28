@@ -71,12 +71,14 @@ PPTXEXTENSION="${PPTX##*.}"
 # modifier for new file name
 # MODIFIER="gy"
 
-# echo "Making temp directory"
+echo "Making temp directory"
 TEMPDIR=$(mktemp -d )
 if [[ $? -ne 0 ]]
 then
     echo "error creating temporary directory"
     exit
+else
+    echo "created temporary directory ${TEMPDIR}"
 fi
 
 if [[ ! -d "$TEMPDIR" ]]
