@@ -157,10 +157,12 @@ fi
 
 # for some reason, macos (unzip? zip?) additionally creates 
 # a folder in $TMPDIR
-echo "removing $TMPDIR/pptx2gray*"
-rm -rf "$TMPDIR/pptx2gray*"
+echo "removing ${TMPDIR}pptx2gray*"
+rm -rf "${TMPDIR}pptx2gray*"
 if [[ $? -ne 0 ]]
 then
-    echo "error removing $TMPDIR/pptx2gray*"
+    echo "error removing ${TMPDIR}pptx2gray*"
     exit
 fi
+
+echo .
