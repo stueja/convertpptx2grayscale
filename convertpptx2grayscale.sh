@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # mandatory programs
 for NEEDED in unzip mogrify zip
 do
@@ -72,7 +71,8 @@ PPTXEXTENSION="${PPTX##*.}"
 # MODIFIER="gy"
 
 echo "Making temp directory"
-TEMPDIR=$(mktemp -d )
+TEMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/pptx2gray.XXXXXXXXX"
+)
 if [[ $? -ne 0 ]]
 then
     echo "error creating temporary directory"
